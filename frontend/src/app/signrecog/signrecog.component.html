@@ -1,0 +1,41 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<div class="btnid">
+    <button type="button" class="btn btn-primary" routerLink="/">Home</button>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 left-side">
+
+            <h1 class="text-center">Sign Recognition</h1>
+            <div class="video-content">
+                <video id="video" autoplay></video>
+            </div>
+            <div class="controls">
+                <button id="recordButton" class="btn btn-primary">Start Recording</button>
+            </div>
+
+            <div id="videoResponse" class="responseClass">{{videoResponse}}</div>
+            <div class="bottom-buttons">
+                <button class="speak-button btn btn-primary" (click)="speakResponse()">Speech Response <i
+                        class="fas fa-volume-up"></i></button>
+                <button class="clear-button btn btn-primary" (click)="clearResponse()">Clear</button>
+            </div>
+        </div>
+
+        <div class="col-md-4 right-side mt-3">
+            <div class="content">
+                <div class="logo text-center">
+                    <img src="assets/Images/logo.png" alt="Project Logo" class="img-fluid project-logo">
+                </div>
+                <div class="main-heading text-center">
+                    <h2>SymbolSync</h2>
+                </div>
+                <div class="btn-class text-center">
+                    <button class="btn btn-primary" routerLink="/signlearn">Sign Learning</button>
+                    <button class="btn btn-primary" routerLink="/signrecog">Sign Recognition</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
