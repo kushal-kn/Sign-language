@@ -20,6 +20,6 @@ Before running the project, ensure you have the following packages installed:
 
 ## Backend
 1. To run the backend, navigate to app.py and enter the following command :
-* pythhon app.py
+* python app.py
 2. Create a folder named "src" and download the model file from the below link :
 * https://drive.google.com/file/d/1oHEa9N6cpwVdYXZoa_XCDtaUNFH_MdCW/view?usp=sharing
