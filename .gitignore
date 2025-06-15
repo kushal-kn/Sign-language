@@ -1,0 +1,8 @@
+# Ignore the sample videos folder from backend
+../backend/runs/
+
+# Node modules
+node_modules/
+
+# Ignore model file
+src/
