@@ -1,13 +1,11 @@
 h1,
 p {
-    font-family: "Times New Roman", serif;
+    font-family: "Montserrat", sans-serif;
 
 }
 
-
 .image-spacing {
     margin-bottom: 20px;
-    /* Adjust this value as needed */
 }
 
 .btn {
@@ -27,9 +25,6 @@ p {
     color: #fff;
 }
 
-
-
-
 .left-side {
     width: 50%;
     background-color: rgb(180, 179, 179);
@@ -38,7 +33,6 @@ p {
     height: auto;
 }
 
-/* Right Side */
 .right-side {
     padding: 20px;
     padding-left: 80px;
@@ -52,12 +46,9 @@ p {
 .btnid {
     position: absolute;
     top: 20px;
-    /* Adjust as needed */
     left: 20px;
-    /* Adjust as needed */
 }
 
-/* Content */
 .content {
     background: rgba(192, 192, 192, 0.579);
     text-align: center;
@@ -65,18 +56,23 @@ p {
     border-radius: 6px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 p {
     font-size: 20px;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
+.buttonContainer button {
+    font-family: "Roboto", sans-serif;
+    min-width: 150px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
 }

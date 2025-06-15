@@ -1,51 +1,61 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-import subprocess
+from flask_cors import CORS
+from ultralytics import YOLO
+from collections import Counter
 import os
-import time
 
 app = Flask(__name__)
 CORS(app)
 
+# Load YOLOv8 sign language model
+model = YOLO("../src/best.pt")  # Adjust the path to your model file
 
-@app.route('/', methods=['POST'])
-@cross_origin()
+# Create uploads folder if it doesn't exist
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/predict', methods=['POST'])
 def predict():
-    # Get the video data from the request
-    video_data = request.files.get('video')
+    if 'video' not in request.files:
+        return jsonify({'status': 'error', 'message': 'No video part in the request'}), 400
 
-    # Generate a unique filename based on the current timestamp
-    timestamp = int(time.time())
-    video_filename = f'received_video_{timestamp}.webm'
-    print(video_filename)
+    video = request.files['video']
 
-    # Specify the folder path to save the video
-    video_folder = 'C:/virus/Final year project/sign-master/src'
-    # Create the folder if it doesn't exist
-    os.makedirs(video_folder, exist_ok=True)
-    video_path = os.path.join(video_folder, video_filename)
-    video_data.save(video_path)
+    if video.filename == '':
+        return jsonify({'status': 'error', 'message': 'No selected video'}), 400
 
-    # After saving the video, execute the second Python script
-    # Change directory to where the second script is located
-    script_path = 'C:/virus/Final year project/sign-master/backend/front.py'
-    os.chdir(os.path.dirname(script_path))
+    # Save the uploaded video
+    save_path = os.path.join(UPLOAD_FOLDER, video.filename)
+    video.save(save_path)
 
-    # Execute the second script and capture its output
-    result = subprocess.run(['python', script_path],
-                            capture_output=True, text=True)
+    try:
+        # Run prediction using YOLO model
+        results = model(save_path)
 
-    # Check if the command was successful
-    if result.returncode == 0:
-        response = result.stdout
-    else:
-        response = f"Error: {result.stderr}"
+        # List to store recognized signs
+        recognized_signs = []
 
-    # Send the command output as the response back to the client
-    return jsonify({'response': response})
+        # Loop through detections and extract class labels
+        for result in results:
+            boxes = result.boxes
+            if boxes is not None and boxes.cls is not None:
+                for cls_id in boxes.cls:
+                    label = model.names[int(cls_id)]
+                    recognized_signs.append(label)
+
+        # Count and get the most frequent label
+        sign_counts = Counter(recognized_signs)
+        most_common_sign = sign_counts.most_common(1)[0][0] if sign_counts else None
+
+        return jsonify({
+            'status': 'success',
+            'recognizedSign': most_common_sign,
+            'message': 'YOLO prediction completed'
+        })
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
-if __name__ == '_main_':
-    print('hiii')
+if __name__ == '__main__':
     app.run(debug=True)
-    

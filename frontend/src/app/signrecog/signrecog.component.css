@@ -1,3 +1,9 @@
+body {
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 .btnid {
     position: absolute;
     top: 20px;
@@ -103,4 +109,21 @@ video {
     color: rgb(96, 0, 174);
     margin-bottom: 10px;
     transition: background-color 0.3s, color 0.3s;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
+.buttonContainer button {
+    font-family: "Roboto", sans-serif;
+    min-width: 150px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
 }
