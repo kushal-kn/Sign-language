@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SignlearnComponent } from '../signlearn/signlearn.component';
 import { IntroComponent } from '../intro/intro.component';
@@ -8,16 +13,16 @@ import { IntroComponent } from '../intro/intro.component';
   standalone: true,
   imports: [RouterLink, SignlearnComponent, IntroComponent],
   templateUrl: './signrecog.component.html',
-  styleUrl: './signrecog.component.css'
+  styleUrl: './signrecog.component.css',
 })
 export class SignrecogComponent {
   videoResponse: string = '';
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadCameraPage();
   }
-  
+
   clearResponse(): void {
     const videoResponseElement = document.getElementById('videoResponse');
     if (videoResponseElement) {
@@ -27,7 +32,9 @@ export class SignrecogComponent {
 
   loadCameraPage(): void {
     const video = document.getElementById('video') as HTMLVideoElement;
-    const recordButton = document.getElementById('recordButton') as HTMLButtonElement;
+    const recordButton = document.getElementById(
+      'recordButton'
+    ) as HTMLButtonElement;
 
     let stream: MediaStream;
     let mediaRecorder: MediaRecorder;
@@ -35,12 +42,13 @@ export class SignrecogComponent {
     let isRecording = false;
 
     // Access webcam
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(mediaStream => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((mediaStream) => {
         video.srcObject = mediaStream;
         stream = mediaStream;
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error accessing webcam:', err);
       });
 
@@ -66,33 +74,32 @@ export class SignrecogComponent {
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
         const formData = new FormData();
-        formData.append('video', blob);
+        formData.append('video', blob, 'recorded_video.webm'); // ✅ Explicit filename
 
-        fetch('http://127.0.0.1:5000', {
+        fetch('http://127.0.0.1:5000/predict', {
           method: 'POST',
-          body: formData
+          body: formData,
         })
-          .then(response => response.json())
-          .then(data => {
-            // Handle API response here
-            console.log("Response", data.response);
-            const responseEl = document.getElementById("videoResponse");
-            // Append each word horizontally with the first letter aligned to the left
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Response', data);
+
+            const responseEl = document.getElementById('videoResponse');
             if (responseEl) {
-              // Trim the response data to remove leading and trailing spaces
-              const trimmedResponse = data.response.trim();
-              // Update the content of the videoResponse element
-              responseEl.textContent += trimmedResponse;
-            } else {
-              console.error("Element with ID 'videoResponse' not found.");
+              if (data.status === 'success') {
+                responseEl.textContent += ` ${data.recognizedSign}`;
+              } else {
+                responseEl.textContent += ` ${
+                  data.message || 'An error occurred'
+                }`;
+              }
             }
           })
-
-          .catch(error => {
+          .catch((error) => {
             console.error('Error sending video to API:', error);
           });
 
-        chunks = []; // Clear chunks for the next recording
+        chunks = []; 
       };
 
       mediaRecorder.start();
@@ -120,8 +127,4 @@ export class SignrecogComponent {
       console.error("Element with ID 'videoResponse' not found.");
     }
   }
-
-
-
 }
-
